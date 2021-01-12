@@ -1,6 +1,9 @@
 #include "Window.h"
 #include "SDL/SDL.h"
 #include "Engine.h"
+#include "Logger.h"
+#include <string>
+#include "Input.h"
 
 Window::Window(std::string title, int width, int height)
 {
@@ -25,6 +28,22 @@ void Window::Update()
 		{
 		case SDL_QUIT:
 			Engine::Get()->Quit();
+			break;
+		case SDL_KEYDOWN:
+			if (e.key.repeat == 0)
+			{
+				Input::SetKeyDown(e.key.keysym.sym);
+			}
+			else
+			{
+				Input::SetKeyDownRepeat(e.key.keysym.sym);
+			}
+			//Logger::Log(std::to_string((int)e.key.keysym.sym) + " pressed");
+			break;
+		case SDL_KEYUP:
+			Input::SetKeyUp(e.key.keysym.sym);
+			//Logger::Log(std::to_string((int)e.key.keysym.sym) + " released");
+			break;
 		}
 	}
 }

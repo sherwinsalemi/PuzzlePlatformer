@@ -1,2 +1,5 @@
 ﻿  Engine.cpp
+  Input.cpp
+  Window.cpp
+  Generating Code...
   PuzzlePlatformer.vcxproj -> F:\dev\PuzzlePlatformer\x64\Debug\PuzzlePlatformer.exe

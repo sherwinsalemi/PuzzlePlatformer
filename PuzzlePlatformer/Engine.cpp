@@ -1,13 +1,13 @@
 #include "Engine.h"
 #include "Logger.h"
+#include "Input.h"
+#include "SDL/SDL_keycode.h"
 
 Engine* Engine::instance = nullptr;
 
 void Engine::Run()
 {
-	Logger::Log("Init");
-	Logger::Warn("Init");
-	Logger::Error("Init");
+	Logger::Log("Init game");
 	// Init
 
 	instance = this;
@@ -20,7 +20,25 @@ void Engine::Run()
 
 	while (m_running)
 	{
+		Input::Update();
 		m_window->Update();
+
+		if (Input::KeyboardCheck('a'))
+		{
+			Logger::Log("A held");
+		}
+		if (Input::KeyboardCheckPressed('b'))
+		{
+			Logger::Log("B pressed");
+		}
+		if (Input::KeyboardCheckReleased('c'))
+		{
+			Logger::Log("C released");
+		}
+		if (Input::KeyboardCheckPressedRepeat('d'))
+		{
+			Logger::Log("D pressed repeat");
+		}
 	}
 
 	// End
@@ -30,6 +48,7 @@ void Engine::Run()
 
 void Engine::Quit()
 {
+	Logger::Log("Quitting");
 	m_running = false;
 }
 
