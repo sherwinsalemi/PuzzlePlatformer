@@ -14,6 +14,8 @@ void Engine::Run()
 
 	m_window = new Window("Game", 1280, 720);
 
+	m_render = new Render(m_window->GetNativeWindow());
+
 	// Running
 
 	m_running = true;
@@ -39,6 +41,8 @@ void Engine::Run()
 		{
 			Logger::Log("D pressed repeat");
 		}
+
+		m_render->SwapBuffers();
 	}
 
 	// End

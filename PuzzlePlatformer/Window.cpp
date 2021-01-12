@@ -9,7 +9,7 @@ Window::Window(std::string title, int width, int height)
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
 
-	m_window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, 0);
+	m_window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_OPENGL);
 }
 
 Window::~Window()
@@ -46,4 +46,9 @@ void Window::Update()
 			break;
 		}
 	}
+}
+
+SDL_Window* Window::GetNativeWindow()
+{
+	return m_window;
 }

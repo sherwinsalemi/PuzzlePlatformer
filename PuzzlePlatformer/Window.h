@@ -9,6 +9,7 @@ public:
 	Window(std::string title, int width, int height);
 	~Window();
 	void Update();
+	SDL_Window* GetNativeWindow();
 private:
 	SDL_Window* m_window;
 };
