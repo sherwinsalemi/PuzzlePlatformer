@@ -25,7 +25,12 @@ void Engine::Run()
 		Input::Update();
 		m_window->Update();
 
-		if (Input::KeyboardCheck('a'))
+		if (Input::KeyboardCheck(SDLK_ESCAPE))
+		{
+			m_running = false;
+		}
+
+		/*if (Input::KeyboardCheck('a'))
 		{
 			Logger::Log("A held");
 		}
@@ -40,7 +45,9 @@ void Engine::Run()
 		if (Input::KeyboardCheckPressedRepeat('d'))
 		{
 			Logger::Log("D pressed repeat");
-		}
+		}*/
+
+		m_render->RenderTest();
 
 		m_render->SwapBuffers();
 	}
