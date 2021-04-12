@@ -39,16 +39,20 @@ void Render::RenderTest()
 {
 	const char* vertexShaderSource = "#version 330 core\n"
 									 "layout (location = 0) in vec3 aPos;\n"
+									 "out vec4 vertexColor;\n"
 									 "void main()\n"
 									 "{\n"
 									 "	gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+									 "  vertexColor = vec4(aPos.x, aPos.y, 0.0f, 1.0f);"
 							      	 "}\0";
 
 	const char* fragmentShaderSource = "#version 330 core\n"
 		                               "out vec4 FragColor;\n"
+									   "in vec4 vertexColor;\n"
+									   "uniform float ourColor;\n"
 		                               "void main()\n"
 		                               "{\n"
-		                               "  FragColor = vec4(1.0f, 0.0f, 0.0f, 1.f);\n"
+		                               "  FragColor = vec4(vertexColor.x, vertexColor.y, ourColor, vertexColor.a);\n"
 		                               "}\0";
 
 	unsigned int vertexShader;
@@ -93,10 +97,18 @@ void Render::RenderTest()
 		Logger::Error("Error linking shader program: " + std::string(infoLog));
 	}
 
+	Uint32 timeValue = SDL_GetTicks();
+	float colorValue = (sin(timeValue/150) / 2.0f) + 0.5f;
+	int ourColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+
 	glUseProgram(shaderProgram);
+
+	glUniform1f(ourColorLocation, colorValue);
 
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
+
+	
 
 	float verticies[] = {
 		-0.5f, -0.5f, 0.0f,
@@ -128,7 +140,7 @@ void Render::RenderTest()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
