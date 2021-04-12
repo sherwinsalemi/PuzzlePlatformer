@@ -117,6 +117,8 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -134,6 +136,8 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -145,20 +149,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Engine.cpp" />
-    <ClCompile Include="glad.c" />
-    <ClCompile Include="Input.cpp" />
-    <ClCompile Include="Logger.cpp" />
-    <ClCompile Include="PuzzlePlatformer.cpp" />
-    <ClCompile Include="Render.cpp" />
-    <ClCompile Include="Window.cpp" />
+    <ClCompile Include="src\Engine.cpp" />
+    <ClCompile Include="src\glad.c" />
+    <ClCompile Include="src\Input.cpp" />
+    <ClCompile Include="src\Logger.cpp" />
+    <ClCompile Include="src\ObjectSystem.cpp" />
+    <ClCompile Include="src\PuzzlePlatformer.cpp" />
+    <ClCompile Include="src\Render.cpp" />
+    <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Engine.h" />
-    <ClInclude Include="Input.h" />
-    <ClInclude Include="Logger.h" />
-    <ClInclude Include="Render.h" />
-    <ClInclude Include="Window.h" />
+    <ClInclude Include="src\Engine.h" />
+    <ClInclude Include="src\Input.h" />
+    <ClInclude Include="src\Logger.h" />
+    <ClInclude Include="src\ObjectSystem.h" />
+    <ClInclude Include="src\Render.h" />
+    <ClInclude Include="src\Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

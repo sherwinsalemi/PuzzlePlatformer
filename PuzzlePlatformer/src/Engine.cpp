@@ -5,7 +5,27 @@
 
 Engine* Engine::instance = nullptr;
 
-void Engine::Run()
+class TestObj : public Object
+{
+	void Create()
+	{
+
+	}
+	void Update()
+	{
+		Logger::Log("TestObj Update");
+	}
+	void Render()
+	{
+
+	}
+	void Destroy()
+	{
+
+	}
+};
+
+void Engine::Init()
 {
 	Logger::Log("Init game");
 	// Init
@@ -13,15 +33,18 @@ void Engine::Run()
 	instance = this;
 
 	m_window = new Window("Game", 1280, 720);
-
 	m_render = new Render(m_window->GetNativeWindow());
+	m_objectSystem = new ObjectSystem();
+}
 
+void Engine::Run()
+{
 	// Running
-
 	m_running = true;
 
 	while (m_running)
 	{
+		// update
 		Input::Update();
 		m_window->Update();
 
@@ -30,31 +53,23 @@ void Engine::Run()
 			m_running = false;
 		}
 
-		/*if (Input::KeyboardCheck('a'))
-		{
-			Logger::Log("A held");
-		}
-		if (Input::KeyboardCheckPressed('b'))
-		{
-			Logger::Log("B pressed");
-		}
-		if (Input::KeyboardCheckReleased('c'))
-		{
-			Logger::Log("C released");
-		}
-		if (Input::KeyboardCheckPressedRepeat('d'))
-		{
-			Logger::Log("D pressed repeat");
-		}*/
+		m_objectSystem->UpdateObjects();
+
+		// render
+
+		m_render->Clear();
 
 		m_render->RenderTest();
+
+		m_objectSystem->RenderObjects();
 
 		m_render->SwapBuffers();
 	}
 
 	// End
-
+	delete m_render;
 	delete m_window;
+	delete m_objectSystem;
 }
 
 void Engine::Quit()

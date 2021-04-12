@@ -1,8 +1,8 @@
 #include "Render.h"
+#include "Logger.h"
 
 #include <SDL/SDL.h>
 #include <glad/glad.h>
-#include <iostream>
 #include <string>
 
 Render::Render(SDL_Window* window)
@@ -12,7 +12,7 @@ Render::Render(SDL_Window* window)
 
 	if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress))
 	{
-		std::cerr << "Failed to init OpenGL Context:" << std::endl;
+		Logger::Error("Failed to initialize OpenGL Context");
 		exit(1);
 	}
 
@@ -26,16 +26,17 @@ Render::~Render()
 
 void Render::SwapBuffers()
 {
-	
 	SDL_GL_SwapWindow(m_window);
+}
+
+void Render::Clear(float r, float g, float b, float a)
+{
+	glClearColor(r, g, b, a);
+	glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void Render::RenderTest()
 {
-
-	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
-
 	const char* vertexShaderSource = "#version 330 core\n"
 									 "layout (location = 0) in vec3 aPos;\n"
 									 "void main()\n"
@@ -67,7 +68,7 @@ void Render::RenderTest()
 	if (!success)
 	{
 		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		std::cout << "Error compiling shader: " << infoLog << std::endl;
+		Logger::Error("Error compiling shader: " + std::string(infoLog));
 	}
 
 	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
@@ -75,7 +76,7 @@ void Render::RenderTest()
 	if (!success)
 	{
 		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-		std::cout << "Error compiling shader: " << infoLog << std::endl;
+		Logger::Error("Error compiling shader: " + std::string(infoLog));
 	}
 
 	unsigned int shaderProgram;
@@ -89,7 +90,7 @@ void Render::RenderTest()
 	if (!success)
 	{
 		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-		std::cout << "Error linking shader program: " << infoLog << std::endl;
+		Logger::Error("Error linking shader program: " + std::string(infoLog));
 	}
 
 	glUseProgram(shaderProgram);
