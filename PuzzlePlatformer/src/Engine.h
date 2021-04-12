@@ -10,6 +10,9 @@ public:
 	void Run();
 	void Quit();
 	static Engine* Get();
+
+	Render* GetRender();
+	ObjectSystem* GetObjectSystem();
 private:
 	bool m_running;
 	Window* m_window;

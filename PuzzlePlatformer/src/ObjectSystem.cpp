@@ -8,10 +8,12 @@ ObjectSystem::ObjectSystem()
 void ObjectSystem::AddObject(Object* object)
 {
 	objects.push_back(object);
+	object->Create();
 }
 
 void ObjectSystem::RemoveObject(Object* object)
 {
+	object->Destroy();
 	std::vector<Object*>::iterator position = std::find(objects.begin(), objects.end(), object);
 	if (position != objects.end())
 	{

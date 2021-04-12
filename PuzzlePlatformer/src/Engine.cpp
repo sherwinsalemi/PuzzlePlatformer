@@ -5,26 +5,6 @@
 
 Engine* Engine::instance = nullptr;
 
-class TestObj : public Object
-{
-	void Create()
-	{
-
-	}
-	void Update()
-	{
-		Logger::Log("TestObj Update");
-	}
-	void Render()
-	{
-
-	}
-	void Destroy()
-	{
-
-	}
-};
-
 void Engine::Init()
 {
 	Logger::Log("Init game");
@@ -81,4 +61,14 @@ void Engine::Quit()
 Engine* Engine::Get()
 {
 	return instance;
+}
+
+Render* Engine::GetRender()
+{
+	return m_render;
+}
+
+ObjectSystem* Engine::GetObjectSystem()
+{
+	return m_objectSystem;
 }
