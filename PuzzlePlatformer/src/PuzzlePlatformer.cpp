@@ -3,7 +3,6 @@
 #include "Logger.h"
 #include "Input.h"
 #include "SDL/SDL_keycode.h"
-
 #ifdef NDEBUG
 #include <Windows.h>
 #endif
@@ -34,12 +33,13 @@ class DebugObject : public Object
 	}
 };
 
-int main()
-{
-#ifdef NDEBUG
-	ShowWindow(GetConsoleWindow(), SW_HIDE);
-#endif
 
+#ifndef NDEBUG
+int main()
+#else
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
+#endif
+{
 	Engine engine;
 
 	engine.Init();

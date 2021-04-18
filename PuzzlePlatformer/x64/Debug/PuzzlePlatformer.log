@@ -1,3 +1,2 @@
-﻿  Render.cpp
-C:\dev\PuzzlePlatformer\PuzzlePlatformer\src\Render.cpp(101,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+﻿  PuzzlePlatformer.cpp
   PuzzlePlatformer.vcxproj -> C:\dev\PuzzlePlatformer\x64\Debug\PuzzlePlatformer.exe

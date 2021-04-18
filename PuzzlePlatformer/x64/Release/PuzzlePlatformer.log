@@ -1,1 +1,7 @@
-﻿  PuzzlePlatformer.vcxproj -> C:\dev\PuzzlePlatformer\x64\Release\PuzzlePlatformer.exe
+﻿  PuzzlePlatformer.cpp
+  Generating code
+  92 of 352 functions (26.1%) were compiled, the rest were copied from previous compilation.
+    80 functions were new in current compilation
+    29 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  PuzzlePlatformer.vcxproj -> C:\dev\PuzzlePlatformer\x64\Release\PuzzlePlatformer.exe
