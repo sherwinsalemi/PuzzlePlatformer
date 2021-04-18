@@ -25,11 +25,9 @@ class DebugObject : public Object
 	}
 	void Render()
 	{
-		Logger::Log("DebugObj Rendered");
 	}
 	void Destroy()
 	{
-		Logger::Log("DebugObj Destroyed");
 	}
 };
 
