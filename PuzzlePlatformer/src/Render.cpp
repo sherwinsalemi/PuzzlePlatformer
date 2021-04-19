@@ -56,36 +56,7 @@ void Render::RenderTest()
 		                               "{\n"
 		                               "  FragColor = vec4(vertexColor.x, vertexColor.y, ourColor, vertexColor.a);\n"
 		                               "}\0";
-	// shader setup
-	unsigned int vertexShader;
-	vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
-
-	unsigned int fragmentShader;
-	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
-
-	// shader error checking
-
-	int success;
-	char infoLog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-
-	if (!success)
-	{
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		Logger::Error("Error compiling shader: " + std::string(infoLog));
-	}
-
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-
-	if (!success)
-	{
-		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-		Logger::Error("Error compiling shader: " + std::string(infoLog));
-	}
+	
 
 	// shader program creation
 
@@ -130,26 +101,140 @@ void Render::RenderTest()
 		0, 2, 3
 	};
 
-	unsigned int VBO;
-	unsigned int VAO;
-	unsigned int EBO;
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
+	//unsigned int VBO;
+	VertexBufferObject VBO = VertexBufferObject(verticies, sizeof(verticies));
+	ElementBufferObject EBO = ElementBufferObject(indicies, sizeof(indicies));
+	VertexArrayObject VAO;
 
-	glGenVertexArrays(1, &VAO);
+	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(verticies), verticies, GL_STATIC_DRAW);
 
-	glBindVertexArray(VAO);
+	VAO.Bind();
 
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(verticies), verticies, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies), indicies, GL_STATIC_DRAW);
+	VBO.Bind();
+	EBO.Bind();
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+}
+
+VertexBufferObject::VertexBufferObject(float points[], size_t size)
+{
+	glGenBuffers(1, &this->bufferID);
+	glBindBuffer(GL_ARRAY_BUFFER, this->bufferID);
+	glBufferData(GL_ARRAY_BUFFER, size, points, GL_STATIC_DRAW);
+}
+
+VertexBufferObject::~VertexBufferObject()
+{
+	glDeleteBuffers(1, &this->bufferID);
+}
+
+unsigned int VertexBufferObject::GetId()
+{
+	return this->bufferID;
+}
+
+void VertexBufferObject::Bind()
+{
+	glBindBuffer(GL_ARRAY_BUFFER, this->bufferID);
+}
+
+ElementBufferObject::ElementBufferObject(unsigned int indices[], size_t size)
+{
+	glGenBuffers(1, &this->bufferID);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->bufferID);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, indices, GL_STATIC_DRAW);
+}
+
+ElementBufferObject::~ElementBufferObject()
+{
+	glDeleteBuffers(1, &this->bufferID);
+}
+
+unsigned int ElementBufferObject::GetId()
+{
+	return this->bufferID;
+}
+
+void ElementBufferObject::Bind()
+{
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->bufferID);
+}
+
+VertexArrayObject::VertexArrayObject()
+{
+	glGenVertexArrays(1, &arrayID);
+}
+
+VertexArrayObject::~VertexArrayObject()
+{
+	glDeleteVertexArrays(1, &arrayID);
+}
+
+void VertexArrayObject::Bind()
+{
+	glBindVertexArray(arrayID);
+}
+
+ShaderProgram::ShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource)
+{
+	// shader setup
+	unsigned int vertexShader;
+	vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+	glCompileShader(vertexShader);
+
+	unsigned int fragmentShader;
+	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+	glCompileShader(fragmentShader);
+
+	// shader error checking
+
+	int success;
+	char infoLog[512];
+	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+
+	if (!success)
+	{
+		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+		Logger::Error("Error compiling shader: " + std::string(infoLog));
+	}
+
+	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+
+	if (!success)
+	{
+		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+		Logger::Error("Error compiling shader: " + std::string(infoLog));
+	}
+
+		// shader program creation
+
+	shaderID = glCreateProgram();
+
+	glAttachShader(shaderProgram, vertexShader);
+	glAttachShader(shaderProgram, fragmentShader);
+	glLinkProgram(shaderProgram);
+
+	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+	if (!success)
+	{
+		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+		Logger::Error("Error linking shader program: " + std::string(infoLog));
+	}
+}
+
+ShaderProgram::~ShaderProgram()
+{
+
+}
+
+void ShaderProgram::Bind()
+{
+
 }

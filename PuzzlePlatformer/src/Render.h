@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstddef>
+
 struct SDL_Window;
 typedef void* SDL_GLContext;
 
@@ -18,5 +20,42 @@ private:
 
 class VertexBufferObject
 {
+public:
+	VertexBufferObject(float points[], size_t size);
+	~VertexBufferObject();
+	unsigned int GetId();
+	void Bind();
+private:
+	unsigned int bufferID;
+};
 
+class ElementBufferObject
+{
+public:
+	ElementBufferObject(unsigned int indicies[], size_t size);
+	~ElementBufferObject();
+	unsigned int GetId();
+	void Bind();
+private:
+	unsigned int bufferID;
+};
+
+class VertexArrayObject
+{
+public:
+	VertexArrayObject();
+	~VertexArrayObject();
+	void Bind();
+private:
+	unsigned int arrayID;
+};
+
+class ShaderProgram
+{
+public:
+	ShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource);
+	~ShaderProgram();
+	void Bind();
+private:
+	unsigned int shaderID;
 };
