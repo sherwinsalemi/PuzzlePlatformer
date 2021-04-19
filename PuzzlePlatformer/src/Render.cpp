@@ -4,6 +4,7 @@
 #include <SDL/SDL.h>
 #include <glad/glad.h>
 #include <string>
+#include <math.h>
 
 Render::Render(SDL_Window* window)
 {
@@ -98,7 +99,7 @@ void Render::RenderTest()
 	}
 
 	Uint32 timeValue = SDL_GetTicks();
-	float colorValue = (sin(timeValue/150) / 2.0f) + 0.5f;
+	float colorValue = (sinf(timeValue/150.0f) / 2.0f) + 0.5f;
 	int ourColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
 
 	glUseProgram(shaderProgram);

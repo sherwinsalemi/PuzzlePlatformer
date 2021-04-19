@@ -1,4 +1,5 @@
 #include "ObjectSystem.h"
+#include <algorithm>
 
 ObjectSystem::ObjectSystem()
 {
