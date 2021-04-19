@@ -38,6 +38,7 @@ void Render::Clear(float r, float g, float b, float a)
 
 void Render::RenderTest()
 {
+	// shader data
 	const char* vertexShaderSource = "#version 330 core\n"
 									 "layout (location = 0) in vec3 aPos;\n"
 									 "out vec4 vertexColor;\n"
@@ -55,7 +56,7 @@ void Render::RenderTest()
 		                               "{\n"
 		                               "  FragColor = vec4(vertexColor.x, vertexColor.y, ourColor, vertexColor.a);\n"
 		                               "}\0";
-
+	// shader setup
 	unsigned int vertexShader;
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
@@ -65,6 +66,8 @@ void Render::RenderTest()
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
 	glCompileShader(fragmentShader);
+
+	// shader error checking
 
 	int success;
 	char infoLog[512];
@@ -84,6 +87,8 @@ void Render::RenderTest()
 		Logger::Error("Error compiling shader: " + std::string(infoLog));
 	}
 
+	// shader program creation
+
 	unsigned int shaderProgram;
 	shaderProgram = glCreateProgram();
 
@@ -98,6 +103,8 @@ void Render::RenderTest()
 		Logger::Error("Error linking shader program: " + std::string(infoLog));
 	}
 
+	// shader uniform setting
+
 	Uint32 timeValue = SDL_GetTicks();
 	float colorValue = (sinf(timeValue/150.0f) / 2.0f) + 0.5f;
 	int ourColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
@@ -109,7 +116,7 @@ void Render::RenderTest()
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
-	
+	// vertex buffer and element buffer creation
 
 	float verticies[] = {
 		-0.5f, -0.5f, 0.0f,
