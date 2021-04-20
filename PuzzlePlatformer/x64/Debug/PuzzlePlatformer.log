@@ -1,2 +1,3 @@
-﻿  PuzzlePlatformer.cpp
+﻿  Render.cpp
+C:\dev\PuzzlePlatformer\PuzzlePlatformer\src\Render.cpp(122,65): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
   PuzzlePlatformer.vcxproj -> C:\dev\PuzzlePlatformer\x64\Debug\PuzzlePlatformer.exe

@@ -32,11 +32,13 @@ private:
 class ElementBufferObject
 {
 public:
-	ElementBufferObject(unsigned int indicies[], size_t size);
+	ElementBufferObject(unsigned int indicies[], size_t count);
 	~ElementBufferObject();
 	unsigned int GetId();
 	void Bind();
+	size_t GetCount();
 private:
+	size_t m_count;
 	unsigned int bufferID;
 };
 
@@ -56,6 +58,6 @@ public:
 	ShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource);
 	~ShaderProgram();
 	void Bind();
-private:
+public:
 	unsigned int shaderID;
 };

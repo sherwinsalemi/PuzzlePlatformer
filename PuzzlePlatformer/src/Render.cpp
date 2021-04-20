@@ -60,33 +60,33 @@ void Render::RenderTest()
 
 	// shader program creation
 
-	unsigned int shaderProgram;
-	shaderProgram = glCreateProgram();
+	ShaderProgram shaderProgram = ShaderProgram(vertexShaderSource, fragmentShaderSource);
 
+	/*
 	glAttachShader(shaderProgram, vertexShader);
 	glAttachShader(shaderProgram, fragmentShader);
 	glLinkProgram(shaderProgram);
 
+	GLint success = false;
+	char infoLog[513]{};
 	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
 	if (!success)
 	{
 		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
 		Logger::Error("Error linking shader program: " + std::string(infoLog));
-	}
+	}*/
 
 	// shader uniform setting
 
 	Uint32 timeValue = SDL_GetTicks();
 	float colorValue = (sinf(timeValue/150.0f) / 2.0f) + 0.5f;
-	int ourColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+	int ourColorLocation = glGetUniformLocation(shaderProgram.shaderID, "ourColor");
 
-	glUseProgram(shaderProgram);
+	shaderProgram.Bind();
 
 	glUniform1f(ourColorLocation, colorValue);
 
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-
+	
 	// vertex buffer and element buffer creation
 
 	float verticies[] = {
@@ -103,22 +103,23 @@ void Render::RenderTest()
 
 	//unsigned int VBO;
 	VertexBufferObject VBO = VertexBufferObject(verticies, sizeof(verticies));
-	ElementBufferObject EBO = ElementBufferObject(indicies, sizeof(indicies));
+	ElementBufferObject EBO = ElementBufferObject(indicies, sizeof(indicies) / sizeof(uint32_t));
 	VertexArrayObject VAO;
 
 	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(verticies), verticies, GL_STATIC_DRAW);
 
 	VAO.Bind();
-
-	VBO.Bind();
+	
 	EBO.Bind();
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
+	{
+		VBO.Bind();
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	}
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, EBO.GetCount(), GL_UNSIGNED_INT, 0);
 }
 
 VertexBufferObject::VertexBufferObject(float points[], size_t size)
@@ -143,11 +144,12 @@ void VertexBufferObject::Bind()
 	glBindBuffer(GL_ARRAY_BUFFER, this->bufferID);
 }
 
-ElementBufferObject::ElementBufferObject(unsigned int indices[], size_t size)
+ElementBufferObject::ElementBufferObject(unsigned int indices[], size_t count)
 {
 	glGenBuffers(1, &this->bufferID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->bufferID);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
+	m_count = count;
 }
 
 ElementBufferObject::~ElementBufferObject()
@@ -163,6 +165,11 @@ unsigned int ElementBufferObject::GetId()
 void ElementBufferObject::Bind()
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->bufferID);
+}
+
+size_t ElementBufferObject::GetCount()
+{
+	return m_count;
 }
 
 VertexArrayObject::VertexArrayObject()
@@ -217,24 +224,27 @@ ShaderProgram::ShaderProgram(const char* vertexShaderSource, const char* fragmen
 
 	shaderID = glCreateProgram();
 
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
+	glAttachShader(shaderID, vertexShader);
+	glAttachShader(shaderID, fragmentShader);
+	glLinkProgram(shaderID);
 
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+
+	glGetProgramiv(shaderID, GL_LINK_STATUS, &success);
 	if (!success)
 	{
-		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+		glGetProgramInfoLog(shaderID, 512, NULL, infoLog);
 		Logger::Error("Error linking shader program: " + std::string(infoLog));
 	}
 }
 
 ShaderProgram::~ShaderProgram()
 {
-
+	glDeleteProgram(shaderID);
 }
 
 void ShaderProgram::Bind()
 {
-
+	glUseProgram(shaderID);
 }

@@ -33,10 +33,10 @@
     <ClCompile Include="src\Render.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\glad.c">
+    <ClCompile Include="src\ObjectSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ObjectSystem.cpp">
+    <ClCompile Include="src\glad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -150,7 +150,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine.cpp" />
-    <ClCompile Include="src\glad.c" />
+    <ClCompile Include="src\glad.cpp" />
     <ClCompile Include="src\Input.cpp" />
     <ClCompile Include="src\Logger.cpp" />
     <ClCompile Include="src\ObjectSystem.cpp" />
