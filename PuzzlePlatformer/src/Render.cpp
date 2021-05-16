@@ -17,6 +17,13 @@ Render::Render(SDL_Window* window)
 		exit(1);
 	}
 
+	VertexArrayObject VAO;
+
+	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(verticies), verticies, GL_STATIC_DRAW);
+
+	VAO.Bind();
+
 	// loaded opengl successfully
 
 }
@@ -90,26 +97,34 @@ void Render::RenderTest()
 	// vertex buffer and element buffer creation
 
 	float verticies[] = {
-		-0.5f, -0.5f, 0.0f,
-		-0.5f,  0.5f, 0.0f,
-		 0.5f,  0.5f, 0.0f,
-		 0.5f, -0.5f, 0.0f
+		-0.5f, -0.5f,
+		0.5f, -0.5f,
+		0.0f, 0.5f
 	};
 
 	unsigned int indicies[] = {
-		0, 1, 2,
-		0, 2, 3
+		0, 1, 2
 	};
 
+	// float texCoords[] = {
+	// 	0.0f, 0.0f,
+	// 	1.0f, 0.0f,
+	// 	0.5f, 1.0f
+	// };
+
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
 	//unsigned int VBO;
-	VertexBufferObject VBO = VertexBufferObject(verticies, sizeof(verticies));
-	ElementBufferObject EBO = ElementBufferObject(indicies, sizeof(indicies) / sizeof(uint32_t));
-	VertexArrayObject VAO;
+	VertexBuffer VBO = VertexBuffer(verticies, sizeof(verticies));
+	IndexBuffer EBO = IndexBuffer(indicies, sizeof(indicies) / sizeof(uint32_t));
 
-	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(verticies), verticies, GL_STATIC_DRAW);
-
-	VAO.Bind();
 	
 	EBO.Bind();
 
@@ -122,29 +137,29 @@ void Render::RenderTest()
 	glDrawElements(GL_TRIANGLES, EBO.GetCount(), GL_UNSIGNED_INT, 0);
 }
 
-VertexBufferObject::VertexBufferObject(float points[], size_t size)
+VertexBuffer::VertexBuffer(float points[], size_t size)
 {
 	glGenBuffers(1, &this->bufferID);
 	glBindBuffer(GL_ARRAY_BUFFER, this->bufferID);
 	glBufferData(GL_ARRAY_BUFFER, size, points, GL_STATIC_DRAW);
 }
 
-VertexBufferObject::~VertexBufferObject()
+VertexBuffer::~VertexBuffer()
 {
 	glDeleteBuffers(1, &this->bufferID);
 }
 
-unsigned int VertexBufferObject::GetId()
+unsigned int VertexBuffer::GetId()
 {
 	return this->bufferID;
 }
 
-void VertexBufferObject::Bind()
+void VertexBuffer::Bind()
 {
 	glBindBuffer(GL_ARRAY_BUFFER, this->bufferID);
 }
 
-ElementBufferObject::ElementBufferObject(unsigned int indices[], size_t count)
+IndexBuffer::IndexBuffer(unsigned int indices[], size_t count)
 {
 	glGenBuffers(1, &this->bufferID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->bufferID);
@@ -152,22 +167,22 @@ ElementBufferObject::ElementBufferObject(unsigned int indices[], size_t count)
 	m_count = count;
 }
 
-ElementBufferObject::~ElementBufferObject()
+IndexBuffer::~IndexBuffer()
 {
 	glDeleteBuffers(1, &this->bufferID);
 }
 
-unsigned int ElementBufferObject::GetId()
+unsigned int IndexBuffer::GetId()
 {
 	return this->bufferID;
 }
 
-void ElementBufferObject::Bind()
+void IndexBuffer::Bind()
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->bufferID);
 }
 
-size_t ElementBufferObject::GetCount()
+size_t IndexBuffer::GetCount()
 {
 	return m_count;
 }

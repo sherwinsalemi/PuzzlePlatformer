@@ -18,22 +18,22 @@ private:
 	SDL_GLContext m_context;
 };
 
-class VertexBufferObject
+class VertexBuffer
 {
 public:
-	VertexBufferObject(float points[], size_t size);
-	~VertexBufferObject();
+	VertexBuffer(float points[], size_t size);
+	~VertexBuffer();
 	unsigned int GetId();
 	void Bind();
 private:
 	unsigned int bufferID;
 };
 
-class ElementBufferObject
+class IndexBuffer
 {
 public:
-	ElementBufferObject(unsigned int indicies[], size_t count);
-	~ElementBufferObject();
+	IndexBuffer(unsigned int indicies[], size_t count);
+	~IndexBuffer();
 	unsigned int GetId();
 	void Bind();
 	size_t GetCount();
