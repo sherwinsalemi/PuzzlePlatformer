@@ -53,7 +53,7 @@ void Render::RenderTest()
 									 "{\n"
 									 "	gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
 									 "  vertexColor = vec4(aPos.x, aPos.y, 0.0f, 1.0f);"
-							      	 "}\0";
+							      	 "}";
 
 	const char* fragmentShaderSource = "#version 330 core\n"
 		                               "out vec4 FragColor;\n"
@@ -62,12 +62,13 @@ void Render::RenderTest()
 		                               "void main()\n"
 		                               "{\n"
 		                               "  FragColor = vec4(vertexColor.x, vertexColor.y, ourColor, vertexColor.a);\n"
-		                               "}\0";
+		                               "}";
 	
 
 	// shader program creation
 
 	ShaderProgram shaderProgram = ShaderProgram(vertexShaderSource, fragmentShaderSource);
+
 
 	/*
 	glAttachShader(shaderProgram, vertexShader);
@@ -97,13 +98,15 @@ void Render::RenderTest()
 	// vertex buffer and element buffer creation
 
 	float verticies[] = {
-		-0.5f, -0.5f,
-		0.5f, -0.5f,
-		0.0f, 0.5f
+		-0.5f, -0.5f, 1.0f,
+		-0.5f, 0.5f, 1.0f,
+		0.5f, -0.5f, 1.0f,
+		0.5f, 0.5f, 1.0f
 	};
 
 	unsigned int indicies[] = {
-		0, 1, 2
+		0, 1, 2,
+		1, 3, 2
 	};
 
 	// float texCoords[] = {
