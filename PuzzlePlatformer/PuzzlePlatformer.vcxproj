@@ -153,6 +153,7 @@
     <ClCompile Include="src\glad.cpp" />
     <ClCompile Include="src\Input.cpp" />
     <ClCompile Include="src\Logger.cpp" />
+    <ClCompile Include="src\Math.cpp" />
     <ClCompile Include="src\ObjectSystem.cpp" />
     <ClCompile Include="src\PuzzlePlatformer.cpp" />
     <ClCompile Include="src\Render.cpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\Input.h" />
     <ClInclude Include="src\Logger.h" />
+    <ClInclude Include="src\Math.h" />
     <ClInclude Include="src\ObjectSystem.h" />
     <ClInclude Include="src\Render.h" />
     <ClInclude Include="src\Window.h" />

@@ -17,15 +17,39 @@ Render::Render(SDL_Window* window)
 		exit(1);
 	}
 
-	VertexArrayObject VAO;
+	uint32_t VAOId;
+	glGenVertexArrays(1, &VAOId);
+	glBindVertexArray(VAOId);
+
 
 	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(verticies), verticies, GL_STATIC_DRAW);
 
-	VAO.Bind();
+	const char* vertexShaderSource = "#version 330 core\n"
+		"layout (location = 0) in vec3 aPos;\n"
+		"layout (location = 1) in vec4 aColor;\n"
+		"out vec4 vertexColor;\n"
+		"void main()\n"
+		"{\n"
+		"	gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+		"   vertexColor = aColor;"
+		"}";
 
-	// loaded opengl successfully
+	const char* fragmentShaderSource = "#version 330 core\n"
+		"out vec4 FragColor;\n"
+		"in vec4 vertexColor;\n"
+		//"uniform float ourColor;\n"
+		"void main()\n"
+		"{\n"
+		"	FragColor = vec4(vertexColor.x, vertexColor.y, vertexColor.z, vertexColor.a);\n"
+		"}";
 
+
+	// shader program creation
+
+	m_shaderProgram = CreateShaderProgram(vertexShaderSource, fragmentShaderSource);
+
+	BindShaderProgram(&m_shaderProgram);
 }
 
 Render::~Render()
@@ -43,70 +67,41 @@ void Render::Clear(float r, float g, float b, float a)
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
+void Render::Draw(VertexBuffer* vbo, IndexBuffer* ibo)
+{
+	BindIndexBuffer(ibo);
+
+	{
+		BindVertexBuffer(vbo);
+		glEnableVertexAttribArray(0); // vertex pos
+		glEnableVertexAttribArray(1); // color
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0);
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(sizeof(float) * 3));
+	}
+
+	glDrawElements(GL_TRIANGLES, ibo->count, GL_UNSIGNED_INT, 0);
+}
+
 void Render::RenderTest()
 {
 	// shader data
-	const char* vertexShaderSource = "#version 330 core\n"
-									 "layout (location = 0) in vec3 aPos;\n"
-									 "out vec4 vertexColor;\n"
-									 "void main()\n"
-									 "{\n"
-									 "	gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-									 "  vertexColor = vec4(aPos.x, aPos.y, 0.0f, 1.0f);"
-							      	 "}";
+	//Uint32 timeValue = SDL_GetTicks();
+	//float colorValue = (sinf(timeValue/150.0f) / 2.0f) + 0.5f;
+	//int ourColorLocation = glGetUniformLocation(m_shaderProgram.shaderID, "ourColor");
 
-	const char* fragmentShaderSource = "#version 330 core\n"
-		                               "out vec4 FragColor;\n"
-									   "in vec4 vertexColor;\n"
-									   "uniform float ourColor;\n"
-		                               "void main()\n"
-		                               "{\n"
-		                               "  FragColor = vec4(vertexColor.x, vertexColor.y, ourColor, vertexColor.a);\n"
-		                               "}";
-	
-
-	// shader program creation
-
-	ShaderProgram shaderProgram = ShaderProgram(vertexShaderSource, fragmentShaderSource);
-
-
-	/*
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-
-	GLint success = false;
-	char infoLog[513]{};
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-	if (!success)
-	{
-		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-		Logger::Error("Error linking shader program: " + std::string(infoLog));
-	}*/
-
-	// shader uniform setting
-
-	Uint32 timeValue = SDL_GetTicks();
-	float colorValue = (sinf(timeValue/150.0f) / 2.0f) + 0.5f;
-	int ourColorLocation = glGetUniformLocation(shaderProgram.shaderID, "ourColor");
-
-	shaderProgram.Bind();
-
-	glUniform1f(ourColorLocation, colorValue);
+	//glUniform1f(ourColorLocation, colorValue);
 
 	
 	// vertex buffer and element buffer creation
 
 	float verticies[] = {
-		-0.5f, -0.5f, 1.0f,
-		-0.5f, 0.5f, 1.0f,
-		0.5f, -0.5f, 1.0f,
-		0.5f, 0.5f, 1.0f
+		-0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+		0.0f, 0.5f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+		0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f
 	};
 
-	unsigned int indicies[] = {
-		0, 1, 2,
-		1, 3, 2
+	uint32_t indicies[] = {
+		0, 1, 2
 	};
 
 	// float texCoords[] = {
@@ -125,87 +120,24 @@ void Render::RenderTest()
 	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	//unsigned int VBO;
-	VertexBuffer VBO = VertexBuffer(verticies, sizeof(verticies));
-	IndexBuffer EBO = IndexBuffer(indicies, sizeof(indicies) / sizeof(uint32_t));
+	VertexBuffer VBO = CreateVertexBuffer(verticies, sizeof(verticies));
+	IndexBuffer IBO = CreateIndexBuffer(indicies, sizeof(verticies)/sizeof(uint32_t));
 
 	
-	EBO.Bind();
+	BindIndexBuffer(&IBO);
 
 	{
-		VBO.Bind();
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		BindVertexBuffer(&VBO);
+		glEnableVertexAttribArray(0); // vertex pos
+		glEnableVertexAttribArray(1); // color
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0);
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(sizeof(float)*3));
 	}
 
-	glDrawElements(GL_TRIANGLES, EBO.GetCount(), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, IBO.count, GL_UNSIGNED_INT, 0);
 }
 
-VertexBuffer::VertexBuffer(float points[], size_t size)
-{
-	glGenBuffers(1, &this->bufferID);
-	glBindBuffer(GL_ARRAY_BUFFER, this->bufferID);
-	glBufferData(GL_ARRAY_BUFFER, size, points, GL_STATIC_DRAW);
-}
-
-VertexBuffer::~VertexBuffer()
-{
-	glDeleteBuffers(1, &this->bufferID);
-}
-
-unsigned int VertexBuffer::GetId()
-{
-	return this->bufferID;
-}
-
-void VertexBuffer::Bind()
-{
-	glBindBuffer(GL_ARRAY_BUFFER, this->bufferID);
-}
-
-IndexBuffer::IndexBuffer(unsigned int indices[], size_t count)
-{
-	glGenBuffers(1, &this->bufferID);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->bufferID);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
-	m_count = count;
-}
-
-IndexBuffer::~IndexBuffer()
-{
-	glDeleteBuffers(1, &this->bufferID);
-}
-
-unsigned int IndexBuffer::GetId()
-{
-	return this->bufferID;
-}
-
-void IndexBuffer::Bind()
-{
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->bufferID);
-}
-
-size_t IndexBuffer::GetCount()
-{
-	return m_count;
-}
-
-VertexArrayObject::VertexArrayObject()
-{
-	glGenVertexArrays(1, &arrayID);
-}
-
-VertexArrayObject::~VertexArrayObject()
-{
-	glDeleteVertexArrays(1, &arrayID);
-}
-
-void VertexArrayObject::Bind()
-{
-	glBindVertexArray(arrayID);
-}
-
-ShaderProgram::ShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource)
+ShaderProgram CreateShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource)
 {
 	// shader setup
 	unsigned int vertexShader;
@@ -238,31 +170,83 @@ ShaderProgram::ShaderProgram(const char* vertexShaderSource, const char* fragmen
 		Logger::Error("Error compiling shader: " + std::string(infoLog));
 	}
 
-		// shader program creation
+	// shader program creation
 
-	shaderID = glCreateProgram();
+	ShaderProgram shaderProgram;
 
-	glAttachShader(shaderID, vertexShader);
-	glAttachShader(shaderID, fragmentShader);
-	glLinkProgram(shaderID);
+	shaderProgram.shaderID = glCreateProgram();
+
+	glAttachShader(shaderProgram.shaderID, vertexShader);
+	glAttachShader(shaderProgram.shaderID, fragmentShader);
+	glLinkProgram(shaderProgram.shaderID);
 
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
-	glGetProgramiv(shaderID, GL_LINK_STATUS, &success);
+	glGetProgramiv(shaderProgram.shaderID, GL_LINK_STATUS, &success);
 	if (!success)
 	{
-		glGetProgramInfoLog(shaderID, 512, NULL, infoLog);
+		glGetProgramInfoLog(shaderProgram.shaderID, 512, NULL, infoLog);
 		Logger::Error("Error linking shader program: " + std::string(infoLog));
 	}
+
+	return shaderProgram;
 }
 
-ShaderProgram::~ShaderProgram()
+void BindShaderProgram(ShaderProgram* shaderProgram)
 {
-	glDeleteProgram(shaderID);
+	glUseProgram(shaderProgram->shaderID);
 }
 
-void ShaderProgram::Bind()
+void DeleteShaderProgram(ShaderProgram* shaderProgram)
 {
-	glUseProgram(shaderID);
+	glDeleteProgram(shaderProgram->shaderID);
+}
+
+
+
+VertexBuffer CreateVertexBuffer(float points[], size_t size)
+{
+	VertexBuffer buffer;
+	buffer.size = size;
+
+	glGenBuffers(1, &buffer.bufferID);
+	glBindBuffer(GL_ARRAY_BUFFER, buffer.bufferID);
+	glBufferData(GL_ARRAY_BUFFER, size, points, GL_STATIC_DRAW);
+
+	return buffer;
+}
+
+void BindVertexBuffer(VertexBuffer* buffer) 
+{
+	glBindBuffer(GL_ARRAY_BUFFER, buffer->bufferID);
+}
+
+void DeleteVertexBuffer(VertexBuffer* buffer)
+{
+	glDeleteBuffers(1, &buffer->bufferID);
+}
+
+
+
+IndexBuffer CreateIndexBuffer(unsigned int indices[], size_t count)
+{
+	IndexBuffer buffer;
+	buffer.count = count;
+
+	glGenBuffers(1, &buffer.bufferID);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer.bufferID);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
+
+	return buffer;
+}
+
+void BindIndexBuffer(IndexBuffer* buffer)
+{
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer->bufferID);
+}
+
+void DeleteIndexBuffer(IndexBuffer* buffer)
+{
+	glDeleteBuffers(1, &buffer->bufferID);
 }
