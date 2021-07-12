@@ -24,6 +24,18 @@ Matrix4 IdentityMatrix()
 	return matrix;
 }
 
+Matrix4 EmptyMatrix()
+{
+	Matrix4 matrix;
+
+	for (int i = 0; i < 16; i++)
+	{
+		matrix.data[i] = 0.0f;
+	}
+
+	return matrix;
+}
+
 Matrix4 MultiplyMatrix(Matrix4 left, Matrix4 right)
 {
 	Matrix4 matrix;
@@ -32,11 +44,12 @@ Matrix4 MultiplyMatrix(Matrix4 left, Matrix4 right)
 	{
 		for (int col = 0; col < 4; col++)
 		{
-			matrix.data[row * 4 + col] = matrix.data[row * 4] * matrix.data[col] + matrix.data[row * 4 + 1] * matrix.data[col + 4] + matrix.data[row * 4 + 2] * matrix.data[col + 8] + matrix.data[row * 4 + 3] * matrix.data[col + 12];
+			//matrix.data[row * 4 + col] = matrix.data[row * 4] * matrix.data[col] + matrix.data[row * 4 + 1] * matrix.data[col + 4] + matrix.data[row * 4 + 2] * matrix.data[col + 8] + matrix.data[row * 4 + 3] * matrix.data[col + 12];
+			matrix.data[row * 4 + col] = left.data[row * 4] * right.data[col] + left.data[row * 4 + 1] * right.data[col + 4] + left.data[row * 4 + 2] * right.data[col + 8] + left.data[row * 4 + 3] * right.data[col + 12];
 		}
 	}
 
-	return Matrix4();
+	return matrix;
 }
 
 Matrix4 ApplyMatrix(Matrix4 transformation, Vector4 base)

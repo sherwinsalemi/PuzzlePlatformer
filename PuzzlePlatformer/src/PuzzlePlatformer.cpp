@@ -51,15 +51,16 @@ class DebugObject : public Object
 
 int main()
 {
-	Matrix4 mat = IdentityMatrix();
-	Matrix4 transform;
+	Matrix4 a;
+	Matrix4 b;
 
-	transform.data[0] = 1.0f;
-	transform.data[4] = 1.0f;
-	transform.data[8] = 1.0f;
-	transform.data[12] = 1.0f;
+	float matrixA[16] = { 1, 5, 3, 4, 7, 6, 5, 4, 8, 1, 2, 3, 1, 4, 5, 7 };
+	float matrixB[16] = { 1, 4, 2, 3, 5, 6, 9, 8, 9, 9, 0, 7, 8, 6, 4, 5 }; 
 
-	Matrix4 finalMat = MultiplyMatrix(transform, mat);
+	memcpy(a.data, matrixA, sizeof(matrixA));
+	memcpy(b.data, matrixB, sizeof(matrixB));
+
+	Matrix4 finalMat = MultiplyMatrix(a, b);
 
 	for (int i = 0; i < 16; i++)
 	{

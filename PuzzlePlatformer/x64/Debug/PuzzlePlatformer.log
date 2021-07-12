@@ -1,4 +1,2 @@
-﻿  Math.cpp
-  PuzzlePlatformer.cpp
-C:\dev\PuzzlePlatformer\PuzzlePlatformer\src\Math.cpp(7,18): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+﻿  PuzzlePlatformer.cpp
   PuzzlePlatformer.vcxproj -> C:\dev\PuzzlePlatformer\x64\Debug\PuzzlePlatformer.exe
