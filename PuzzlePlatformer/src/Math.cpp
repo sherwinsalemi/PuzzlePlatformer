@@ -52,7 +52,14 @@ Matrix4 MultiplyMatrix(Matrix4 left, Matrix4 right)
 	return matrix;
 }
 
-Matrix4 ApplyMatrix(Matrix4 transformation, Vector4 base)
+Vector4 TransformVector(Matrix4 matrix, Vector4 base)
 {
-	return Matrix4();
+	Vector4 vector;
+
+	vector.x = matrix.data[0] * base.x + matrix.data[1] * base.y + matrix.data[2] * base.z + matrix.data[3] * base.w;
+	vector.y = matrix.data[4] * base.x + matrix.data[5] * base.y + matrix.data[6] * base.z + matrix.data[7] * base.w;
+	vector.z = matrix.data[8] * base.x + matrix.data[9] * base.y + matrix.data[10] * base.z + matrix.data[11] * base.w;
+	vector.w = matrix.data[12] * base.x + matrix.data[13] * base.y + matrix.data[14] * base.z + matrix.data[15] * base.w;
+
+	return vector;
 }

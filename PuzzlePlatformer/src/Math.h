@@ -26,4 +26,4 @@ Matrix4 IdentityMatrix();
 Matrix4 EmptyMatrix();
 
 Matrix4 MultiplyMatrix(Matrix4 coefficient, Matrix4 base);
-Matrix4 ApplyMatrix(Matrix4 transformation, Vector4 base);
+Vector4 TransformVector(Matrix4 transformation, Vector4 base);

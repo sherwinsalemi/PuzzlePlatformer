@@ -52,20 +52,23 @@ class DebugObject : public Object
 int main()
 {
 	Matrix4 a;
-	Matrix4 b;
+	Vector4 b;
 
 	float matrixA[16] = { 1, 5, 3, 4, 7, 6, 5, 4, 8, 1, 2, 3, 1, 4, 5, 7 };
-	float matrixB[16] = { 1, 4, 2, 3, 5, 6, 9, 8, 9, 9, 0, 7, 8, 6, 4, 5 }; 
 
 	memcpy(a.data, matrixA, sizeof(matrixA));
-	memcpy(b.data, matrixB, sizeof(matrixB));
 
-	Matrix4 finalMat = MultiplyMatrix(a, b);
+	b.x = 3;
+	b.y = 7;
+	b.z = 5;
+	b.w = 2;
 
-	for (int i = 0; i < 16; i++)
-	{
-		Logger::Log(std::to_string(finalMat.data[i]));
-	}
+	Vector4 c = TransformVector(a, b);
+
+	Logger::Log(std::to_string(c.x));
+	Logger::Log(std::to_string(c.y));
+	Logger::Log(std::to_string(c.z));
+	Logger::Log(std::to_string(c.w));
 
 	Engine engine;
 
